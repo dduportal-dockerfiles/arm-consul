@@ -9,3 +9,5 @@ RUN git checkout "v${CONSUL_VERSION}"
 RUN go get -u ./...
 RUN make
 RUN bin/consul version
+
+CMD ["cat","bin/consul"]
