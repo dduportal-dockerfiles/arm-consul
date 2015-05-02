@@ -14,8 +14,6 @@ RUN apk --update add curl bash ca-certificates \
 	&& rm -rf /arm-consul-dist*
 
 # From progrium Dockerfile :
-#RUN cat /etc/ssl/certs/*.crt > /etc/ssl/certs/ca-certificates.crt && \
-#    sed -i -r '/^#.+/d' /etc/ssl/certs/ca-certificates.crt
 
 ADD https://github.com/progrium/docker-consul/raw/master/config/consul.json /config/
 ONBUILD ADD ./config /config/
