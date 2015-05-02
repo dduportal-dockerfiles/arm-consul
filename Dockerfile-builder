@@ -3,11 +3,23 @@ MAINTAINER Damien DUPORTAL <damien.duportal@gmail.com>
 
 ENV CONSUL_VERSION 0.5.0
 
-RUN git clone https://github.com/hashicorp/consul ${GOPATH}/src/github.com/hashicorp/consul
+# Get consul souce code, got to wanted version and build
+RUN git clone https://github.com/hashicorp/consul "${GOPATH}/src/github.com/hashicorp/consul"
 WORKDIR $GOPATH/src/github.com/hashicorp/consul
 RUN git checkout "v${CONSUL_VERSION}"
 RUN go get -u ./...
 RUN make
-RUN bin/consul version
 
-CMD ["cat","bin/consul"]
+# Fetch the wanted version of consul's ui stuff
+# And embed all the things inside /arm-consul-dist.tar.gz
+WORKDIR /
+RUN curl -L -o /ui.zip "https://dl.bintray.com/mitchellh/consul/${CONSUL_VERSION}_web_ui.zip" \
+	&& unzip -o /ui.zip -d / \
+	&& rm -f /ui.zip
+
+RUN mkdir -p /arm-consul-dist \
+	&& cp "${GOPATH}/src/github.com/hashicorp/consul/bin/consul" /arm-consul-dist/ \
+	&& mv /dist /arm-consul-dist/ui \
+	&& tar czf /arm-consul-dist.tgz /arm-consul-dist
+
+CMD ["cat","/arm-consul-dist.tgz"]
