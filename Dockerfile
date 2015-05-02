@@ -13,7 +13,21 @@ RUN apk --update add curl bash ca-certificates \
 	&& mv /arm-consul-dist/ui / \
 	&& rm -rf /arm-consul-dist*
 
+# From progrium Dockerfile :
+#RUN cat /etc/ssl/certs/*.crt > /etc/ssl/certs/ca-certificates.crt && \
+#    sed -i -r '/^#.+/d' /etc/ssl/certs/ca-certificates.crt
 
+ADD https://github.com/progrium/docker-consul/raw/master/config/consul.json /config/
+ONBUILD ADD ./config /config/
+
+ADD https://github.com/progrium/docker-consul/raw/master/start /bin/start
+ADD https://github.com/progrium/docker-consul/raw/master/check-http /bin/check-http
+ADD https://github.com/progrium/docker-consul/raw/master/check-cmd /bin/check-cmd
+
+EXPOSE 8300 8301 8301/udp 8302 8302/udp 8400 8500 53 53/udp
 VOLUME ["/data"]
-ENTRYPOINT ["/bin/consul"]
-CMD ["version"]
+
+ENV SHELL /bin/bash
+
+ENTRYPOINT ["/bin/start"]
+CMD []
