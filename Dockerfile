@@ -13,6 +13,8 @@ ADD https://github.com/progrium/docker-consul/raw/master/check-http /bin/check-h
 ADD https://github.com/progrium/docker-consul/raw/master/check-cmd /bin/check-cmd
 
 RUN apk --update add curl bash ca-certificates \
+	&& sed -i 's/progrium\/consul/consul/g' /bin/start \
+	&& sed -i 's/progrium\/consul/consul/g' /bin/check* \
 	&& tar xzf /arm-consul-dist.tgz \
 	&& mv /arm-consul-dist/consul /bin/ \
 	&& mv /arm-consul-dist/ui / \
